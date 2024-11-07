@@ -10,4 +10,14 @@ class Post extends Model
     use HasFactory;
 
     protected $fillable = ['name', 'genre', 'authors'];
+
+    public function technologies()
+{
+    return $this->belongsToMany(Technology::class);
+}
+
+public function posts()
+{
+    return $this->belongsToMany(Post::class);
+}
 }

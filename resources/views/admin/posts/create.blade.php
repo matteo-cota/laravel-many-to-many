@@ -42,6 +42,18 @@
             </select>
         </div>
 
+        <!-- Selezione Tecnologie -->
+        <div class="form-group">
+            <label for="technologies">Tecnologie</label>
+            <select class="form-control" id="technologies" name="technologies[]" multiple>
+                @foreach ($technologies as $technology)
+                    <option value="{{ $technology->id }}" {{ in_array($technology->id, old('technologies', [])) ? 'selected' : '' }}>
+                        {{ $technology->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
         <button type="submit" class="btn btn-primary">Crea Post</button>
     </form>
 </div>

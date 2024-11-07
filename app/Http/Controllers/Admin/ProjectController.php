@@ -32,20 +32,27 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
-
         $request->validate([
-            'title' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'image' => 'nullable|url',
-            'type_id' => 'nullable|exists:types,id'
+            'technologies' => 'nullable|array',  // Assicurati che venga passato un array di ID delle tecnologie
+            'technologies.*' => 'exists:technologies,id',  // Verifica che le tecnologie esistano nella tabella technologies
         ]);
 
+        // Crea il progetto
+        $project = Project::create([
+            'name' => $request->input('name'),
+            'description' => $request->input('description'),
+        ]);
 
-        $project = new Project($request->all());
-        $project->save();
+        // Associa le tecnologie al progetto (se ci sono)
+        if ($request->has('technologies')) {
+            $project->technologies()->attach($request->input('technologies'));
+        }
 
-        return redirect()->route('admin.projects.index')->with('success', 'Progetto creato con successo');
+        return redirect()->route('admin.projects.index')->with('success', 'Progetto creato con successo!');
     }
+
 
     /**
      * Display the specified resource.
@@ -70,18 +77,25 @@ class ProjectController extends Controller
      */
     public function update(Request $request, Project $project)
     {
-
         $request->validate([
-            'title' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'image' => 'nullable|url',
-            'type_id' => 'nullable|exists:types,id'
+            'technologies' => 'nullable|array',
+            'technologies.*' => 'exists:technologies,id',
         ]);
 
-        // Aggiornamento del progetto
-        $project->update($request->all());
+        // Aggiorna il progetto
+        $project->update([
+            'name' => $request->input('name'),
+            'description' => $request->input('description'),
+        ]);
 
-        return redirect()->route('admin.projects.index')->with('success', 'Progetto aggiornato con successo');
+        // Aggiorna le tecnologie associate al progetto
+        if ($request->has('technologies')) {
+            $project->technologies()->sync($request->input('technologies'));
+        }
+
+        return redirect()->route('admin.projects.index')->with('success', 'Progetto aggiornato con successo!');
     }
 
     /**

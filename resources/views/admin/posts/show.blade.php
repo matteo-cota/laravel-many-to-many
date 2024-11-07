@@ -1,13 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visualizza Post</title>
-</head>
-<body>
+@extends('layouts.app')
+
+@section('content')
+<div class="container">
     <h1>{{ $post->title }}</h1>
-    <p>{{ $post->content }}</p>
-    <a href="{{ route('admin.posts.index') }}">Torna alla lista dei post</a>
-</body>
-</html>
+    <p><strong>Genere:</strong> {{ $post->genre }}</p>
+    <p><strong>Autori:</strong> {{ $post->authors }}</p>
+    <p><strong>Tipo:</strong> {{ $post->type }}</p>
+
+    <h3>Tecnologie utilizzate:</h3>
+    <ul>
+        @foreach($post->technologies as $technology)
+            <li>{{ $technology->name }}</li>
+        @endforeach
+    </ul>
+
+    <a href="{{ route('admin.posts.index') }}" class="btn btn-secondary">Torna alla lista dei post</a>
+</div>
+@endsection
