@@ -41,5 +41,6 @@ Route::get('/projects/{project}', [ProjectController::class, 'show'])->name('pro
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
     Route::resource('posts', PostController::class);
     Route::resource('users', UserController::class);
+    Route::resource('technologies', App\Http\Controllers\Admin\TechnologyController::class);
 
 });
