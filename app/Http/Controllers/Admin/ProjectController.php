@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Project;
 use App\Models\Type;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProjectController extends Controller
 {
@@ -31,27 +32,24 @@ class ProjectController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'technologies' => 'nullable|array',  // Assicurati che venga passato un array di ID delle tecnologie
-            'technologies.*' => 'exists:technologies,id',  // Verifica che le tecnologie esistano nella tabella technologies
-        ]);
+{
+    $request->validate([
+        'title' => 'required|string|max:255',
+        'description' => 'nullable|string',
+        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Valida l'immagine
+    ]);
 
-        // Crea il progetto
-        $project = Project::create([
-            'name' => $request->input('name'),
-            'description' => $request->input('description'),
-        ]);
+    $data = $request->all();
 
-        // Associa le tecnologie al progetto (se ci sono)
-        if ($request->has('technologies')) {
-            $project->technologies()->attach($request->input('technologies'));
-        }
-
-        return redirect()->route('admin.projects.index')->with('success', 'Progetto creato con successo!');
+    // Salva l'immagine se presente
+    if ($request->hasFile('image')) {
+        $data['image'] = $request->file('image')->store('images', 'public');
     }
+
+    Project::create($data);
+
+    return redirect()->route('admin.projects.index')->with('success', 'Progetto creato con successo!');
+}
 
 
     /**
@@ -76,28 +74,29 @@ class ProjectController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, Project $project)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'technologies' => 'nullable|array',
-            'technologies.*' => 'exists:technologies,id',
-        ]);
+{
+    $request->validate([
+        'title' => 'required|string|max:255',
+        'description' => 'nullable|string',
+        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+    ]);
 
-        // Aggiorna il progetto
-        $project->update([
-            'name' => $request->input('name'),
-            'description' => $request->input('description'),
-        ]);
+    $data = $request->all();
 
-        // Aggiorna le tecnologie associate al progetto
-        if ($request->has('technologies')) {
-            $project->technologies()->sync($request->input('technologies'));
+
+    if ($request->hasFile('image')) {
+
+        if ($project->image) {
+            Storage::disk('public')->delete($project->image);
         }
 
-        return redirect()->route('admin.projects.index')->with('success', 'Progetto aggiornato con successo!');
+        $data['image'] = $request->file('image')->store('images', 'public');
     }
 
+    $project->update($data);
+
+    return redirect()->route('admin.projects.index')->with('success', 'Progetto aggiornato con successo!');
+}
     /**
      * Remove the specified resource from storage.
      */

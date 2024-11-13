@@ -3,7 +3,7 @@
 @section('content')
 <div class="container my-5">
     <h2>{{ isset($project) ? 'Modifica Progetto' : 'Crea Nuovo Progetto' }}</h2>
-    <form action="{{ isset($project) ? route('admin.projects.update', $project->id) : route('admin.projects.store') }}" method="POST">
+    <form action="{{ isset($project) ? route('admin.projects.update', $project->id) : route('admin.projects.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         @if (isset($project))
             @method('PUT')
@@ -20,10 +20,9 @@
         </div>
 
         <div class="mb-3">
-            <label for="image" class="form-label">URL Immagine</label>
-            <input type="url" class="form-control" id="image" name="image" value="{{ old('image', $project->image ?? '') }}">
+            <label for="image" class="form-label">Immagine</label>
+            <input type="file" class="form-control" id="image" name="image">
         </div>
-
 
         <div class="mb-3">
             <label for="type_id" class="form-label">Tipo di Progetto</label>

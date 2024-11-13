@@ -3,7 +3,7 @@
 @section('content')
 <div class="container my-5">
     <h2>Modifica Progetto</h2>
-    <form action="{{ route('admin.projects.update', $project->id) }}" method="POST">
+    <form action="{{ route('admin.projects.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
 
@@ -18,8 +18,8 @@
         </div>
 
         <div class="mb-3">
-            <label for="image" class="form-label">URL Immagine</label>
-            <input type="url" class="form-control" id="image" name="image" value="{{ old('image', $project->image) }}">
+            <label for="image" class="form-label">Immagine</label>
+            <input type="file" class="form-control" id="image" name="image">
         </div>
 
         <div class="mb-3">
